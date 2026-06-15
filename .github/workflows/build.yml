@@ -1,15 +1,18 @@
-name: "Godot Export APK and Server"
+name: "Godot Export All"
 on: [push, workflow_dispatch]
 
 jobs:
-  export-android:
-    name: Export Android
+  export:
+    name: Export All Platforms
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Export Android
+      - name: Generate Android Keystore
+        run: keytool -keypass android -storepass android -dname "CN=Android Debug,O=Android,C=US" -validity 9999 -genkey -alias androiddebugkey -keystore debug.keystore -keyalg RSA
+
+      - name: Export All
         uses: firebelley/godot-export@v5.2.1
         with:
           godot_executable_download_url: https://github.com/godotengine/godot/releases/download/4.2.1-stable/Godot_v4.2.1-stable_linux.x86_64.zip
@@ -18,30 +21,8 @@ jobs:
           archive_output: true
           export_debug: true
 
-      - name: Upload APK
+      - name: Upload All Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: LiarsBar-Android
-          path: /home/runner/.local/share/godot/archives/Android.zip
-
-  export-linux-server:
-    name: Export Linux Server
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Export Linux
-        uses: firebelley/godot-export@v5.2.1
-        with:
-          godot_executable_download_url: https://github.com/godotengine/godot/releases/download/4.2.1-stable/Godot_v4.2.1-stable_linux.x86_64.zip
-          godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/4.2.1-stable/Godot_v4.2.1-stable_export_templates.tpz
-          relative_project_path: ./
-          archive_output: true
-          export_debug: false
-
-      - name: Upload Server Binaries
-        uses: actions/upload-artifact@v4
-        with:
-          name: LiarsBar-LinuxServer
-          path: /home/runner/.local/share/godot/archives/Linux_X11.zip
+          name: LiarsBar-Builds
+          path: /home/runner/.local/share/godot/archives/*
