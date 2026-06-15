@@ -58,7 +58,12 @@ jobs:
       - name: Export Android APK
         run: |
           mkdir -p export/android
-          godot --headless --export-debug "Android" export/android/liars_bar.apk
+          godot --headless --export-debug "Android" export/android/liars_bar-unsigned.apk || true
+          
+          if [ -f export/android/liars_bar-unsigned.apk ]; then
+            $ANDROID_SDK_ROOT/build-tools/34.0.0/apksigner sign --ks debug.keystore --ks-key-alias androiddebugkey --ks-pass pass:android export/android/liars_bar-unsigned.apk
+            mv export/android/liars_bar-unsigned.apk export/android/liars_bar.apk
+          fi
 
       - name: Upload Windows Server
         uses: actions/upload-artifact@v4
