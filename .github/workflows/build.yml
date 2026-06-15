@@ -1,0 +1,47 @@
+name: "Godot Export APK and Server"
+on: [push, workflow_dispatch]
+
+jobs:
+  export-android:
+    name: Export Android
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Export Android
+        uses: firebelley/godot-export@v5.2.1
+        with:
+          godot_executable_download_url: https://github.com/godotengine/godot/releases/download/4.2.1-stable/Godot_v4.2.1-stable_linux.x86_64.zip
+          godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/4.2.1-stable/Godot_v4.2.1-stable_export_templates.tpz
+          relative_project_path: ./
+          archive_output: true
+          export_debug: true
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: LiarsBar-Android
+          path: /home/runner/.local/share/godot/archives/Android.zip
+
+  export-linux-server:
+    name: Export Linux Server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Export Linux
+        uses: firebelley/godot-export@v5.2.1
+        with:
+          godot_executable_download_url: https://github.com/godotengine/godot/releases/download/4.2.1-stable/Godot_v4.2.1-stable_linux.x86_64.zip
+          godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/4.2.1-stable/Godot_v4.2.1-stable_export_templates.tpz
+          relative_project_path: ./
+          archive_output: true
+          export_debug: false
+
+      - name: Upload Server Binaries
+        uses: actions/upload-artifact@v3
+        with:
+          name: LiarsBar-LinuxServer
+          path: /home/runner/.local/share/godot/archives/Linux_X11.zip
