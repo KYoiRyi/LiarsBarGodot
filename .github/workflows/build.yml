@@ -35,9 +35,15 @@ jobs:
 
       - name: Configure Godot Editor Settings for Android
         run: |
+          mkdir -p ~/.config/godot/
           godot --headless -e -q --quit || true
-          sed -i "s|export/android/android_sdk_path = \".*\"|export/android/android_sdk_path = \"${ANDROID_SDK_ROOT}\"|g" ~/.config/godot/editor_settings-4.tres
-          sed -i "s|export/android/debug_keystore = \".*\"|export/android/debug_keystore = \"${GITHUB_WORKSPACE}/debug.keystore\"|g" ~/.config/godot/editor_settings-4.tres
+          echo "" >> ~/.config/godot/editor_settings-4.tres
+          echo 'export/android/android_sdk_path = "'${ANDROID_SDK_ROOT}'"' >> ~/.config/godot/editor_settings-4.tres
+          echo 'export/android/debug_keystore = "'${GITHUB_WORKSPACE}'/debug.keystore"' >> ~/.config/godot/editor_settings-4.tres
+          echo 'export/android/debug_keystore_user = "androiddebugkey"' >> ~/.config/godot/editor_settings-4.tres
+          echo 'export/android/debug_keystore_pass = "android"' >> ~/.config/godot/editor_settings-4.tres
+          
+          sed -i "s|keystore/debug=\"res://debug.keystore\"|keystore/debug=\"${GITHUB_WORKSPACE}/debug.keystore\"|g" export_presets.cfg
 
       - name: Export Windows Server
         run: |
